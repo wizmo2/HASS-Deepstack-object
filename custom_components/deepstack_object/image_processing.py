@@ -14,7 +14,7 @@ from datetime import timedelta
 from typing import Tuple, Dict, List
 from pathlib import Path
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, Resampling
 
 import deepstack.core as ds
 import homeassistant.helpers.config_validation as cv
@@ -348,7 +348,7 @@ class ObjectClassifyEntity(ImageProcessingEntity):
         # resize image if different then default
         if self._scale != DEAULT_SCALE:
             newsize = (self._image_width * self._scale, self._image_width * self._scale)
-            self._image.thumbnail(newsize, Image.ANTIALIAS)
+            self._image.thumbnail(newsize, resample=Resampling.LANCZOS)
             self._image_width, self._image_height = self._image.size
             with io.BytesIO() as output:
                 self._image.save(output, format="JPEG")
