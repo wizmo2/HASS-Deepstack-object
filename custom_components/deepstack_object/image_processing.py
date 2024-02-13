@@ -285,7 +285,6 @@ class ObjectClassifyEntity(ImageProcessingEntity):
         )
         self._custom_model = custom_model
         self._confidence = confidence
-        self._summary = {}
         self._targets = targets
         for target in self._targets:
             if CONF_CONFIDENCE not in target.keys():
@@ -362,7 +361,6 @@ class ObjectClassifyEntity(ImageProcessingEntity):
         self._state = None
         self._objects = []  # The parsed raw data
         self._targets_found = []
-        self._summary = {}
         saved_image_path = None
 
         try:
@@ -394,17 +392,17 @@ class ObjectClassifyEntity(ImageProcessingEntity):
                     continue
                 self._targets_found.append(obj)
 
-        self._state = len(self._targets_found)
-        if self._state > 0:
+        targets = len(self._targets_found)
+        if targets > 0:
             self._last_detection = dt_util.now().strftime(DATETIME_FORMAT)
 
         targets_found = [
             obj["name"] for obj in self._targets_found
         ]  # Just the list of target names, e.g. [car, car, person]
-        self._summary = dict(Counter(targets_found))  # e.g. {'car':2, 'person':1}
+        self._state = dict(Counter(targets_found))  # e.g. {'car':2, 'person':1}
 
         if self._save_file_folder:
-            if self._state > 0 or self._always_save_latest_file:
+            if targets > 0 or self._always_save_latest_file:
                 saved_image_path = self.save_image(
                     self._targets_found,
                     self._save_file_folder,
@@ -451,7 +449,6 @@ class ObjectClassifyEntity(ImageProcessingEntity):
         attr["targets_found"] = [
             {obj["name"]: obj["confidence"]} for obj in self._targets_found
         ]
-        attr["summary"] = self._summary
         if self._last_detection:
             attr["last_target_detection"] = self._last_detection
         if self._custom_model:
