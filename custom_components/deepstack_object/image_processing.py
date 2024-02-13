@@ -431,10 +431,10 @@ class ObjectClassifyEntity(ImageProcessingEntity):
         """Return the name of the sensor."""
         return self._name
 
-    @property
-    def unit_of_measurement(self):
-        """Return the unit of measurement."""
-        return "targets"
+    #@property
+    #def unit_of_measurement(self):
+    #    """Return the unit of measurement."""
+    #    return "targets"
 
     @property
     def should_poll(self):
